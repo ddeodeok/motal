@@ -1,0 +1,33 @@
+.game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.game-room-title {
+    text-align: center;
+    font-size: 24px;
+    margin: 16px;
+}
+
+.game-main-layout {
+    display: grid;
+    grid-template-columns: 1fr 250px; /* GameRoom과 GameSidebar의 비율 설정 */
+    height: 100vh;
+    border: 1px solid black;
+    overflow: hidden;    
+}
+/* 오른쪽에 고정된 사이드바 */
+.game-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 100vh;
+    background-color: #f0f0f0;
+    padding: 10px;
+    overflow-y: hidden;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    border: 1px solid black
+}

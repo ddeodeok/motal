@@ -1,0 +1,66 @@
+/* src/styles/RoomList.css */
+
+.room-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.create-room-button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.room-list {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    max-width: 600px;
+}
+
+.room-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.join-room-button {
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.modal-content input {
+    margin-bottom: 15px;
+    padding: 8px;
+    width: 80%;
+    font-size: 16px;
+}
+
+.top-right {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}

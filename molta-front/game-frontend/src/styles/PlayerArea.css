@@ -1,0 +1,40 @@
+.player-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    top: -78%;
+    left: 2%;
+    gap: 10px;
+    height: 250px;
+    width: 90%;
+    border: 1px solid black;
+    background: radial-gradient(circle, #1f99e6, #9dc5dd 99%);
+}
+
+.gate-area {
+    width: 240px;
+    height: 170px;
+    border: 1px solid black;
+}
+
+.player-area .resource-cards {
+    width: 600px;
+    height: 140px;
+    border: 1px solid black;
+}
+
+.player-area .score {
+    border: 1px solid black;
+    width: 50px;
+    height: 50px;
+}
+
+.player-area .function-cards {
+    border: 1px solid black;
+    width: 600px;
+    height: 90%
+}

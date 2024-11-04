@@ -1,0 +1,143 @@
+.opponent-area {
+    position: relative;
+    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid black;
+    background: radial-gradient(circle, #09344e, #04446b 70%);
+}
+
+.opponent-area.left {
+    width: 25%;
+    height: 60%;
+    left: -2%;
+    top: 30%;
+    transform: translateY(-50%);
+}
+
+.opponent-area.top {
+    width: 47%;
+    height: 22%;
+    top: -61%;
+    left: 47.5%;
+    transform: translateX(-50%);
+    display: flex;
+}
+
+.opponent-area.right {
+    width: 25%;
+    height: 60%;
+    right: -72%;
+    top: -51%;
+    transform: translateY(-50%);
+}
+
+.opponent-area.left .top-area,
+.opponent-area.right .top-area  {
+    border: 1px solid black;
+    display: flex;
+    height: 30%;
+    width: 100%;
+}
+
+.opponent-area.left .gate-cards,
+.opponent-area.right .gate-cards {
+    border: 1px solid black;
+    width: 70%;
+    height: 100%;
+}
+
+.opponent-area.left .top-right ,
+.opponent-area.right .top-right {
+    position: inherit;
+    width: 25%;
+    height: 95%;
+    margin-left: 3%;
+}
+
+.opponent-area.left .score, 
+.opponent-area.left .profile,
+.opponent-area.right .score, 
+.opponent-area.right .profile {
+    border: 1px solid black;
+    width: 90%;
+    height: 50%;
+}
+
+.opponent-area.left .function-cards,
+.opponent-area.right .function-cards {
+    border: 1px solid black;
+    width: 95%;
+    height: 45%;
+    margin-left: 2%;
+}
+
+.opponent-area.left .bottom-area, 
+.opponent-area.right .bottom-area {
+    display: flex;
+    border: 1px solid black;
+    justify-content: space-evenly;
+    height: 20%;
+}
+
+.opponent-area.left .resource-cards,
+.opponent-area.left .gems,
+.opponent-area.right .resource-cards,
+.opponent-area.right .gems {
+    border: 1px solid black;
+    width: 45%;
+    height: 90%;
+    margin: 5px 0;
+}
+
+.opponent-area.top .top-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid black;
+    width: 45%;
+    height: 95%;    
+}
+
+.opponent-area.top .top-area .top-right {
+    position: inherit;
+    width: 25%;
+    height: 95%;
+    margin-left: 3%;
+    border: 1px solid black;
+}
+
+.opponent-area.top .bottom-area {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    justify-content: space-evenly;
+    height: 100%;
+    width: 18%;
+
+}
+.opponent-area.top .bottom-area .resource-cards,
+.opponent-area.top .bottom-area .gems {
+    border: 1px solid black;
+    width: 95%;
+    height: 45%;
+    margin: 5px 0;
+}
+
+.opponent-area.top .function-cards {
+    border: 1px solid black;
+    width: 42%;
+    height: 95%;
+    margin: 0.5%,0,0.5%,0;
+}
+
+.opponent-area.top .score, 
+.opponent-area.top .profile{
+    border: 1px solid black;
+    width: 100%;
+    height: 48%;
+}
+.opponent-area.top .top-area .top-right {
+    height: 100%;
+    width:25%;
+}

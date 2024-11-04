@@ -1,0 +1,14 @@
+/* 중앙 보드 설정 */
+.game-room {
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, #4490be, #146ba1 70%);
+    position: relative; /* OpponentArea 위치 고정 기준 */
+    padding: 20px;
+    height: 100%; /* 부모 height 100% */
+    width: 100%;
+    grid-column: 1 / 2;
+    overflow: hidden;
+    height: 100%; 
+    padding-left: 3%;
+}
