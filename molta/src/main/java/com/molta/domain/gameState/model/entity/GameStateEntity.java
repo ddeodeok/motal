@@ -1,9 +1,8 @@
-package com.molta.domain.gameState.entity;
+package com.molta.domain.gameState.model.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.molta.domain.centralBoardState.model.entity.CentralBoardStateEntity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,30 +10,46 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class GameStateEntity {
 
     @Id
     @Comment("고유 아이디")
-    @Column(nullable = false)
-    private String id;
+    @Column(nullable = false, unique = true)
+    private String id = UUID.randomUUID().toString();
 
     @Comment("게임플레이 고유 아이디")
     @Column(nullable = false)
-    private Long gameId;
+    private String gameId;
+
+    // 추가로 연관관계를 명시하는 필드
+    @ManyToOne
+    @JoinColumn(name = "central_board_id", referencedColumnName = "id")
+    private CentralBoardStateEntity centralBoard;
+
 
     @Comment("플레이어 아이디")
     @Column(nullable = false)
-    private Long playerId;
+    private String playerId;
 
     @Comment("플레이어 남은행동")
     @Column(nullable = false)
     @Builder.Default
     private int action = 3;
+    @Comment("마지막 턴 여부를 나타내는 필드")
+    private boolean finalTurn;
+
+    @Comment("남은 추가 턴 수")
+    private int extraTurns;
+
+    @Comment("마지막 턴이 완료되었는지 여부")
+    private boolean finalTurnComplete;
 
     // 자원 카드 보유 갯수 (1-8)
     @Comment("자원 카드 1 보유 갯수")
@@ -254,11 +269,6 @@ public class GameStateEntity {
     @Comment("현재 득점 점수")
     @Column(nullable = false)
     private int currentScore;
-
-    @Comment("보유 액션")
-    @Column(nullable = false)
-    @Builder.Default
-    private int remainingAction = 3;
 
     @Comment("마지막 업데이트 시간")
     @Column(nullable = false)

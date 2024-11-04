@@ -7,14 +7,17 @@ import com.molta.domain.gameState.model.entity.GameStateEntity;
 import com.molta.domain.gameState.repository.GameStateRepository;
 import com.molta.domain.gemCardDefinition.model.entity.GemCardDefinitionEntity;
 import com.molta.domain.gemCardDefinition.repository.GemCardDefinitionRepository;
+import com.molta.domain.gameState.service.GameTurnService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
 @Service
-public class PlayerActionService {
+public class PlayerTakeCardsService {
 
+    @Autowired
+    private GameTurnService gameTurnService;
     @Autowired
     private GameStateRepository gameStateRepository;
     @Autowired
@@ -24,15 +27,15 @@ public class PlayerActionService {
 
 
     // 자원 카드를 가져오는 메서드
-    public void takeResourceCard(Long id, int cardValue, boolean isFromDeck) {
-        GameStateEntity gameState = gameStateRepository.findById(id)
+    public void takeResourceCard(String gameId, String playerId ,int cardValue, boolean isFromDeck) {
+        GameStateEntity gameState = gameStateRepository.findByGameIdAndPlayerId(gameId, playerId)
                 .orElseThrow(() -> new IllegalArgumentException("Game state not found"));
 
         if (gameState.getAction() <= 0) {
             throw new IllegalStateException("No actions remaining for this turn");
         }
         // 게임 ID를 사용해 중앙 보드 상태를 조회
-        CentralBoardStateEntity centralBoard = centralBoardStateRepository.findByGameId(id)
+        CentralBoardStateEntity centralBoard = centralBoardStateRepository.findByGameId(gameId)
                 .orElseThrow(() -> new IllegalStateException("Central board state not found"));
 
         Integer selectedCardValue = null;
@@ -61,6 +64,10 @@ public class PlayerActionService {
         gameState.setAction(gameState.getAction() - 1);
         gameStateRepository.save(gameState);
         centralBoardStateRepository.save(centralBoard);
+        // 턴 종료 체크 및 턴 넘기기
+        if (gameState.getAction() <= 0) {
+            gameTurnService.endTurn(gameId, playerId);
+        }
     }
     // 자원 카드 보유 수량을 증가시키는 메서드
     private void incrementResourceCardCount(GameStateEntity gameState, int cardValue) {
@@ -78,8 +85,8 @@ public class PlayerActionService {
     }
 
 
-    public void takeFunctionCardToGate(Long gameId, Long gameStateId, Long functionCardId, boolean isFromDeck) {
-        GameStateEntity gameState = gameStateRepository.findById(gameStateId)
+    public void takeFunctionCardToGate(String gameId, String playerId, Long functionCardId, boolean isFromDeck) {
+        GameStateEntity gameState = gameStateRepository.findByGameIdAndPlayerId(gameId, playerId)
                 .orElseThrow(() -> new IllegalArgumentException("Game state not found"));
 
         if (gameState.getAction() <= 0) {
@@ -142,17 +149,14 @@ public class PlayerActionService {
             gameState.setReadyRevealCard2(Integer.parseInt(card.getId()));
         }
 
-//        // 관문에 추가
-//        if (gameState.getReadyRevealCard1() == null) {
-//            gameState.setReadyRevealCard1(card.getId().intValue());
-//        } else {
-//            gameState.setReadyRevealCard2(card.getId().intValue());
-//        }
-
         // 행동 소모
         gameState.setAction(gameState.getAction() - 1);
         gameStateRepository.save(gameState);
         centralBoardStateRepository.save(centralBoard);
+        // 턴 종료 체크 및 턴 넘기기
+        if (gameState.getAction() <= 0) {
+            gameTurnService.endTurn(gameId, playerId);
+        }
     }
 
 

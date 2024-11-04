@@ -1,4 +1,4 @@
-package com.molta.domain.gemCardDefinition.entity;
+package com.molta.domain.gemCardDefinition.model.entity;
 
 
 import jakarta.persistence.Column;

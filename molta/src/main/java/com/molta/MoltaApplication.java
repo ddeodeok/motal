@@ -1,4 +1,4 @@
-package com.molta.molta;
+package com.molta;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
