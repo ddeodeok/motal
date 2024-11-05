@@ -3,24 +3,15 @@ import React, { useEffect, useState } from 'react';
 import '../../styles/CentralBoard.css';
 import axios from 'axios';
 
-const CentralBoard: React.FC = () => {
-    const [resourceDeckCount, setResourceDeckCount] = useState(0);
-    const [openResourceCardIds, setOpenResourceCardIds] = useState<number[]>([]);
+type CentralBoardProps = {
+    gameId: string;
+    resourceDeckCount: number;
+    functionDeckCount: number;
+    resourceCards: number[];
+};
 
-    useEffect(() => {
-        const fetchResourceCards = async () => {
-            try {
-                const response = await axios.get('/api/central-board/resource-cards'); // API 수정 필요
-                setResourceDeckCount(response.data.resourceDeckCount);
-                setOpenResourceCardIds(response.data.openResourceCardIds);
-            } catch (error) {
-                console.error("Error fetching resource cards:", error);
-            }
-        };
-
-        fetchResourceCards();
-    }, []);
-
+const CentralBoard: React.FC<CentralBoardProps> = ({ gameId, resourceDeckCount, functionDeckCount, resourceCards }) => {
+console.log("resourceCards:", resourceCards)
     return (
         <div className="central-board">
             <div className="open-cards">
@@ -29,13 +20,17 @@ const CentralBoard: React.FC = () => {
                         <img src={`${process.env.PUBLIC_URL}/images/resource-back.jpg`} alt="자원 카드 덱" className="card-image" />
                         <div className="deck-count">{resourceDeckCount}장</div>
                     </div>
-                    <div className="card">자원 카드 1</div>
-                    <div className="card">자원 카드 2</div>
-                    <div className="card">자원 카드 3</div>
-                    <div className="card">자원 카드 4</div>
+                    {resourceCards.map((cardId, index) => (
+                        <div key={index} className="resource-deck">
+                            <img src={`${process.env.PUBLIC_URL}/images/resource-${cardId}.PNG`} alt={`자원 카드 ${index + 1}`} className="card-image" />
+                        </div>
+                    ))}
                 </div>
                 <div className="function-cards">
-                    <div className="function-deck">기능 카드 덱</div>
+                    <div className="function-deck">
+                        <img src={`${process.env.PUBLIC_URL}/images/gem.jpg`} alt="기능 카드 덱" className="card-image" />
+                        <div className="deck-count">{functionDeckCount}장</div>
+                    </div>
                     <div className="card">기능 카드 1</div>
                     <div className="card">기능 카드 2</div>
                 </div>

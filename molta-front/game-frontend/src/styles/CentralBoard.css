@@ -14,7 +14,8 @@
 }
 
 
-.resource-deck .card-image {
+.resource-deck .card-image,
+.function-deck .card-image {
     width: 100%;
     height: 100%;
     border-radius: 8px;
@@ -44,6 +45,7 @@
 
 .resource-cards, .function-cards {
     position: relative;
+    flex-direction: row;
     display: flex;
     justify-content: center;
     gap:10px;

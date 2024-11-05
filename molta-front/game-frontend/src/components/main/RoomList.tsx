@@ -40,7 +40,7 @@ const RoomList: React.FC<RoomListProps> = ({ onLogout }) =>  {
     try {
         const playerIdString = localStorage.getItem("playerId") || ''; // null일 경우 빈 문자열로 대체
         const nicknameString = localStorage.getItem("nickname") || ''; // null일 경우 빈 문자열로 대체
-        console.log("room", playerIdString, newRoomName,nicknameString);
+        console.log("room : ", playerIdString, newRoomName,nicknameString);
         const response = await axios.post('/room/create', {
             gameId: newRoomName,
             playerId: playerIdString,
@@ -49,9 +49,19 @@ const RoomList: React.FC<RoomListProps> = ({ onLogout }) =>  {
         setShowModal(false); // 모달 닫기
         fetchRooms(); // 방 목록 새로 고침
         alert("방이 성공적으로 생성되었습니다!");
+
+         // 응답 데이터에서 필요한 정보 추출
+        const { gameId, centralBoardStateId, resourceDeckCount, 
+            functionDeckCount, resourceCards } = response.data;
         
         // 방 생성 후 해당 방의 페이지로 이동
-        navigate(`/game/${response.data}`); // response.data에 생성된 방 ID가 포함되어 있다고 가정
+        navigate(`/game/${centralBoardStateId}`, {
+            state: {
+                resourceDeckCount,
+                functionDeckCount,
+                resourceCards
+            }
+        }); // response.data에 생성된 방 ID가 포함되어 있다고 가정
         } catch (error) {
             console.error(error);
             alert("방 생성에 실패했습니다.");
