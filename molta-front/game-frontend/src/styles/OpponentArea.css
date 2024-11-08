@@ -10,16 +10,16 @@
 .opponent-area.left {
     width: 25%;
     height: 60%;
-    left: -2%;
+    left: -2.5%;
     top: 30%;
     transform: translateY(-50%);
 }
 
 .opponent-area.top {
-    width: 47%;
+    width: 50%;
     height: 22%;
     top: -61%;
-    left: 47.5%;
+    left: 47.9%;
     transform: translateX(-50%);
     display: flex;
 }
@@ -27,8 +27,8 @@
 .opponent-area.right {
     width: 25%;
     height: 60%;
-    right: -72%;
-    top: -51%;
+    right: -73%;
+    top: -52%;
     transform: translateY(-50%);
 }
 
@@ -46,6 +46,11 @@
     width: 70%;
     height: 100%;
 }
+.opponent-area.top .gate-cards {
+    border: 1px solid black;
+    width: 80%;
+    height: 100%;
+}
 
 .opponent-area.left .top-right ,
 .opponent-area.right .top-right {
@@ -55,14 +60,39 @@
     margin-left: 3%;
 }
 
+/* 점수 밑 프로파일 영역 */
 .opponent-area.left .score, 
 .opponent-area.left .profile,
 .opponent-area.right .score, 
 .opponent-area.right .profile {
-    border: 1px solid black;
-    width: 90%;
-    height: 50%;
+    width: 100%;
+    height: 48%;
+    font-family: 'Ambient', sans-serif;
+    font-size: 34px;
+    font-weight: bold;
+    color:   #E0FFFF;
+    text-shadow:  0 0 5px #006666;
+    filter: brightness(1.2);
+    background-size: cover; /* 이미지 크기를 요소 크기에 맞게 조절 */
+    background-position: center; /* 배경 위치 중앙 */
+    border-radius: 10px; /* 모서리 둥글게 */
+    display: inline-block;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    overflow: hidden;
+    position: relative;
 }
+
+.score-area {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 26%;
+    left: 0;
+    z-index: 1; /* 자식 1 위에 배치 */
+}
+
+
+
 
 .opponent-area.left .function-cards,
 .opponent-area.right .function-cards {
@@ -88,6 +118,8 @@
     width: 45%;
     height: 90%;
     margin: 5px 0;
+    position: relative;
+    display: inline-block;
 }
 
 .opponent-area.top .top-area {
@@ -103,7 +135,7 @@
     position: inherit;
     width: 25%;
     height: 95%;
-    margin-left: 3%;
+    /* margin-left: 3%; */
     border: 1px solid black;
 }
 
@@ -113,7 +145,7 @@
     border: 1px solid black;
     justify-content: space-evenly;
     height: 100%;
-    width: 18%;
+    width: 14%;
 
 }
 .opponent-area.top .bottom-area .resource-cards,
@@ -133,11 +165,113 @@
 
 .opponent-area.top .score, 
 .opponent-area.top .profile{
-    border: 1px solid black;
     width: 100%;
     height: 48%;
+    font-family: 'Ambient', sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    background-size: cover; /* 이미지 크기를 요소 크기에 맞게 조절 */
+    background-position: center; /* 배경 위치 중앙 */
+    border-radius: 10px; /* 모서리 둥글게 */
+    display: inline-block;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
 }
 .opponent-area.top .top-area .top-right {
     height: 100%;
     width:25%;
+}
+
+
+
+
+/* 이곳부터는 내부! */
+.card-slot {
+    position: absolute;
+    width: 100px;
+    height: 140px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    /* background-color: #f7f7f7; */
+    overflow: hidden;
+}
+
+.card-slot img {
+    width: 100%;
+    height: 100%;
+}
+
+.slot1 {
+    top: 6%; /* 이미지 위에 첫 번째 카드 위치 조정 */
+    left: 10%; /* 카드 위치 조정 */
+}
+
+.slot2 {
+    top: 6%; /* 이미지 위에 두 번째 카드 위치 조정 */
+    right: 10%; /* 카드 위치 조정 */
+}
+.opponent-area.top .slot1{
+    top: 9%;
+    left: 7%;
+}
+.opponent-area.top .slot2{
+    top: 9%;
+    right: 7%;
+}
+
+.resource-cards, .gems {
+    font-size: 14px;
+}
+
+.function-card {
+    width: 40px;
+    height: 60px;
+    border-radius: 4px;
+}
+
+.function-cards .card-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+}
+
+.gate-cards {
+    position: relative;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+}
+.resource-count, .gems-count{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: bold;
+    color: yellow; /* 글자 색상 노랑 */
+    text-shadow: -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000; /* 흰색 테두리 */
+    padding: 4px 8px;
+    text-align: center;
+}
+
+
+@font-face {
+    font-family: 'Ambient';
+    src: url('../../public/fonts/AMBIENT.TTF') format('truetype');
+    font-weight: bold;
+    font-style: normal;
 }

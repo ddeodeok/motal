@@ -8,26 +8,25 @@ interface GameSidebarProps {
 }
 
 const GameSidebar: React.FC<GameSidebarProps> = ({ gameId }) => {
-    const [isHost, setIsHost] = useState(false);
+    // `isHost`를 `localStorage`에서 가져와 초기화
+    const [isHost, setIsHost] = useState<boolean>(() => localStorage.getItem("isHost") === "true");
     const [isReady, setIsReady] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const playerId = localStorage.getItem("playerId");
-        axios.get(`/room/${gameId}/is-host`, { params: { playerId } })
-            .then(response => setIsHost(response.data.isHost))
-            .catch(error => console.error("방장 여부 확인 오류:", error));
-    }, [gameId]);
-
+    // 준비 상태 변경 함수
     const handleReady = () => {
-        setIsReady(!isReady);
-        axios.post(`/room/${gameId}/set-ready`, { playerId: localStorage.getItem("playerId"), isReady: !isReady })
-            .then(() => alert(`준비 상태: ${!isReady ? '준비 완료' : '준비 해제'}`))
+        const playerId = localStorage.getItem("playerId");
+        if (!gameId || !playerId) return;
+
+        const newReadyState = !isReady;
+        setIsReady(newReadyState);
+        axios.post(`/room/${gameId}/set-ready`, { playerId, isReady: newReadyState })
+            .then(() => alert(`준비 상태: ${newReadyState ? '준비 완료' : '준비 해제'}`))
             .catch(error => console.error("준비 상태 변경 오류:", error));
     };
 
     const handleStartGame = () => {
-        axios.post(`/room/${gameId}/start`)
+        axios.post(`/room/${gameId}/start`, null, { params: {gameId}})
             .then(() => alert("게임이 시작되었습니다!"))
             .catch(error => console.error("게임 시작 오류:", error));
     };

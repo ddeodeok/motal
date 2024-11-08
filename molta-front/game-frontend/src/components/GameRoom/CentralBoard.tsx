@@ -1,17 +1,21 @@
 // import React from 'react';
 import React, { useEffect, useState } from 'react';
 import '../../styles/CentralBoard.css';
-import axios from 'axios';
+import { BoardState } from '../../type/types';
+import axios from '../../api/axiosConfig';
 
 type CentralBoardProps = {
-    gameId: string;
-    resourceDeckCount: number;
-    functionDeckCount: number;
-    resourceCards: number[];
+    boardState: BoardState | null;
 };
 
-const CentralBoard: React.FC<CentralBoardProps> = ({ gameId, resourceDeckCount, functionDeckCount, resourceCards }) => {
-console.log("resourceCards:", resourceCards)
+const CentralBoard: React.FC<CentralBoardProps> = ({ boardState }) => {
+    if (!boardState) {
+        return <div>Loading...</div>;
+    }
+    const { resourceDeckCount, functionDeckCount, openResourceCards, openFunctionCards } = boardState;
+console.log('boardState',boardState)
+console.log("resourceCards:", openResourceCards)
+
     return (
         <div className="central-board">
             <div className="open-cards">
@@ -20,9 +24,9 @@ console.log("resourceCards:", resourceCards)
                         <img src={`${process.env.PUBLIC_URL}/images/resource-back.jpg`} alt="자원 카드 덱" className="card-image" />
                         <div className="deck-count">{resourceDeckCount}장</div>
                     </div>
-                    {resourceCards.map((cardId, index) => (
+                    {openResourceCards.map((cardId, index) => (
                         <div key={index} className="resource-deck">
-                            <img src={`${process.env.PUBLIC_URL}/images/resource-${cardId}.PNG`} alt={`자원 카드 ${index + 1}`} className="card-image" />
+                            <img src={`${process.env.PUBLIC_URL}/images/resource-${cardId}.jpg`} alt={`자원 카드 ${index + 1}`} className="card-image" />
                         </div>
                     ))}
                 </div>

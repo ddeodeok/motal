@@ -16,25 +16,48 @@
 }
 
 .gate-area {
-    width: 240px;
+    width: 30%;
     height: 170px;
     border: 1px solid black;
+    position: inherit;
 }
 
 .player-area .resource-cards {
-    width: 600px;
-    height: 140px;
+    width: 40%;
+    height: 80%;
     border: 1px solid black;
 }
 
 .player-area .score {
-    border: 1px solid black;
-    width: 50px;
+    width: 40%;
     height: 50px;
+    position: absolute;
+    z-index: 1;
+    font-size: 34px;
+    left:43%;
+    top:30%;
 }
 
 .player-area .function-cards {
     border: 1px solid black;
-    width: 600px;
+    width: 30%;
     height: 90%
+}
+
+.player-area .score-area {
+    width: 10%;
+    height: 48%;
+    font-family: 'Ambient', sans-serif;
+    font-size: 34px;
+    font-weight: bold;
+    color:   #E0FFFF;
+    text-shadow:  0 0 5px #006666;
+    border-radius: 10px; /* 모서리 둥글게 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    top: -20%;
+    left: 0.3%
 }

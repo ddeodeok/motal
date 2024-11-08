@@ -6,7 +6,12 @@ import '../../styles/RoomList.css';
 import axios from '../../api/axiosConfig';
 
 interface Room {
-    id: number;
+    gameId: string;
+    roomName: string;
+    isStarted: boolean;
+    hostId: string;
+    playerCount: number;
+    id: string;
     name: string;
 }
 
@@ -25,7 +30,14 @@ const RoomList: React.FC<RoomListProps> = ({ onLogout }) =>  {
     }, []);
 
     const fetchRooms = async () => {
-        // TODO: 방 목록 가져오기 API 호출
+        try {
+            const response = await axios.get('/room/list');  // 방 목록 API 호출
+            setRooms(response.data);  // 받아온 방 목록을 rooms 상태에 저장
+            
+        } catch (error) {
+            console.error("방 목록 가져오기 실패:", error);
+            // alert("방 목록을 가져오는 데 실패했습니다.");
+        }
     };
 
     const handleLogout = () => {
@@ -53,6 +65,10 @@ const RoomList: React.FC<RoomListProps> = ({ onLogout }) =>  {
          // 응답 데이터에서 필요한 정보 추출
         const { gameId, centralBoardStateId, resourceDeckCount, 
             functionDeckCount, resourceCards } = response.data;
+            console.log('response:',response.data)
+            console.log('resourceCards:',resourceCards)
+        // 방장이므로 로컬스토리지에 방장 정보 저장
+        localStorage.setItem("isHost", "true");
         
         // 방 생성 후 해당 방의 페이지로 이동
         navigate(`/game/${centralBoardStateId}`, {
@@ -68,17 +84,23 @@ const RoomList: React.FC<RoomListProps> = ({ onLogout }) =>  {
         }
     };
 
-    const handleJoinRoom = async (roomId: number) => {
+    const handleJoinRoom = async (centralBoardId: String) => {
     try {
             const playerId = localStorage.getItem("playerId"); // playerId 가져오기
+            console.log('centralBoardId',centralBoardId)
             await axios.post('/room/join', null, {
                 params: {
-                    gameId: roomId,
-                    playerId: playerId
+                    centralBoardId,
+                    playerId
                 }
             });
+            const boardStateResponse = await axios.get(`/room/${centralBoardId}/board-state`);
             alert("방에 참가하였습니다!");
-            navigate(`/game/${roomId}`); // 게임 화면으로 이동
+            navigate(`/game/${centralBoardId}`, {
+                state: {
+                    boardState: boardStateResponse.data
+                }
+            });
         } catch (error) {
             console.error(error);
             alert("방 참가에 실패했습니다.");
@@ -112,14 +134,34 @@ const RoomList: React.FC<RoomListProps> = ({ onLogout }) =>  {
             )}
 
             {/* 방 목록 */}
-            <ul className="room-list">
-                {rooms.map(room => (
-                    <li key={room.id} className="room-item">
-                        <span>{room.name}</span>
-                        <button onClick={() => handleJoinRoom(room.id)} className="join-room-button">참가</button>
-                    </li>
-                ))}
-            </ul>
+            <table className="room-list-table">
+                <thead>
+                    <tr>
+                        <th>순번</th>
+                        <th>방 이름</th>
+                        <th>플레이어 수</th>
+                        <th>방장 아이디</th>
+                        <th>게임 상태</th>
+                        <th>참가</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rooms.map((room, index) => (
+                        <tr key={room.id}>
+                            <td>{index + 1}</td>
+                            <td>{room.roomName}</td>
+                            <td>{room.playerCount}</td>
+                            <td>{room.hostId}</td>
+                            <td>{room.isStarted ? '게임 중' : '대기 중'}</td>
+                            <td>
+                                <button onClick={() => handleJoinRoom(room.id)}>
+                                    참가
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };
