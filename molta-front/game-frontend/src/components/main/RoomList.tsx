@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/RoomList.css';
 import axios from '../../api/axiosConfig';
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 
 interface Room {
     gameId: string;
@@ -23,10 +25,36 @@ const RoomList: React.FC<RoomListProps> = ({ onLogout }) =>  {
     const [showModal, setShowModal] = useState(false);
     const [newRoomName, setNewRoomName] = useState('');
     const navigate = useNavigate();
+    const [stompClient, setStompClient] = useState<Client | null>(null);
 
     // 방 목록 가져오기
     useEffect(() => {
         fetchRooms();
+        const socket = new SockJS('http://localhost:8412/ws/chat');
+        const client = new Client({
+            webSocketFactory: () => socket,
+            reconnectDelay: 5000,
+            connectHeaders: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+            onConnect: () => {
+                console.log('WebSocket 연결 성공!');
+                client.subscribe('/topic/room/updates', (message: any) => {
+                    console.log('Room update received:', message.body);
+                    fetchRooms();
+                });
+            },
+            onDisconnect: () => {
+                console.log('WebSocket 연결 종료');
+            },
+        });
+        setStompClient(client);
+        client.activate(); // WebSocket 연결 시작
+        return () => {
+            if (client) {
+                client.deactivate();
+            }
+        };
     }, []);
 
     const fetchRooms = async () => {
