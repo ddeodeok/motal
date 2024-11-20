@@ -2,6 +2,7 @@ package com.molta.domain.gameState.model.entity;
 
 
 import com.molta.domain.centralBoardState.model.entity.CentralBoardStateEntity;
+import com.molta.domain.playerInformation.model.entity.PlayerInformation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,10 +34,12 @@ public class GameStateEntity {
     @JoinColumn(name = "central_board_id", referencedColumnName = "id")
     private CentralBoardStateEntity centralBoard;
 
-
     @Comment("플레이어 아이디")
     @Column(nullable = false)
     private String playerId;
+    @ManyToOne
+    @JoinColumn(name = "player_info_id", referencedColumnName = "userId", insertable = false, updatable = false)
+    private PlayerInformation playerInformation; // PlayerInformation과 연관 관계 추가
 
     @Comment("플레이어 남은행동")
     @Column(nullable = false)
@@ -50,6 +53,14 @@ public class GameStateEntity {
 
     @Comment("마지막 턴이 완료되었는지 여부")
     private boolean finalTurnComplete;
+
+    @Comment("선 플레이어 ID")
+    @Column(nullable = true)
+    private String firstPlayerId;
+
+    @Comment("현재 플레이어 ID")
+    @Column(nullable = false)
+    private String currentPlayer;
 
     // 자원 카드 보유 갯수 (1-8)
     @Comment("자원 카드 1 보유 갯수")
@@ -258,11 +269,11 @@ public class GameStateEntity {
     private int sameTwoCardsAndSameTwoCards;
 
 
-    @Comment("계시 준비 카드 종류 (1)")
+    @Comment("관문1번 카드영역")
     @Column(nullable = true)
     private Integer readyRevealCard1;
 
-    @Comment("계시 준비 카드 종류 (2)")
+    @Comment("관문2번 카드영역")
     @Column(nullable = true)
     private Integer readyRevealCard2;
 
@@ -274,4 +285,10 @@ public class GameStateEntity {
     @Column(nullable = false)
     private LocalDateTime lastUpdated;
 
+    @PrePersist
+    public void prePersist() {
+        if (lastUpdated == null) {
+            this.lastUpdated = LocalDateTime.now();  // 저장 시 현재 시간으로 설정
+        }
+    }
 }

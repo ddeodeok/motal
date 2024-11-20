@@ -6,7 +6,7 @@ import com.molta.domain.playerInformation.repositiory.PlayerInformationRepositor
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,8 +16,8 @@ import java.util.Date;
 public class PlayerInformationService {
     @Autowired
     private PlayerInformationRepository playerInformationRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     //회원 가입
     public String registerUser(String userId, String name ,String nickname  ,String rawPassword) {
@@ -30,14 +30,14 @@ public class PlayerInformationService {
         }
 
         // 비밀번호 암호화
-        String encodedPassword = passwordEncoder.encode(rawPassword);
+//        String encodedPassword = passwordEncoder.encode(rawPassword);
 
         // 사용자 엔티티 생성 및 저장
         PlayerInformation newUser = PlayerInformation.builder()
                 .userId(userId)
                 .name(name)
                 .nickname(nickname)
-                .password(encodedPassword)
+                .password(rawPassword)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -49,9 +49,9 @@ public class PlayerInformationService {
     public boolean authenticateUser(String userId, String rawPassword) {
         PlayerInformation user = playerInformationRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("아이디가 존재하지 않습니다."));
-        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+//        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+//            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+//        }
         return true;
     }
 

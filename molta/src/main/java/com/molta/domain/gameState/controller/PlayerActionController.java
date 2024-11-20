@@ -43,12 +43,15 @@ public class PlayerActionController {
     @Comment("자원 가져오기")
     @PostMapping("/take-resource-card")
     public ResponseEntity<String> takeResourceCard(@RequestBody TakeResourceCardDTO request) {
+        System.out.println("Received request: " + request);  // 요청 객체 출력
         try {
             playerTakeCardsService.takeResourceCard(
+                    request.getCentralBoardId(),
                     request.getGameId(),
                     request.getPlayerId(),
-                    request.getCardValue(),
-                    request.isFromDeck()
+                    request.getCardId(),
+                    request.isFromDeck(),
+                    request.getIndex()
             );
             return ResponseEntity.ok("Resource card taken successfully.");
         } catch (Exception e) {

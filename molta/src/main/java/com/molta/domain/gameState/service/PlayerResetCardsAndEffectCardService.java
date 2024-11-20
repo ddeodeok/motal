@@ -58,6 +58,7 @@ public class PlayerResetCardsAndEffectCardService {
         // 행동 소모
         gameState.setAction(gameState.getAction() - 1);
         gameStateRepository.save(gameState);
+        centralBoard.updateLastActivity();
         centralBoardStateRepository.save(centralBoard);
 
         // 턴 종료 체크 및 턴 넘기기
@@ -121,6 +122,7 @@ public class PlayerResetCardsAndEffectCardService {
                 gameState.setGemCount(gameState.getGemCount() + 1);
             }
             // 수정 후 updatedCentralBoard의 변경된 상태를 저장
+            centralBoard.updateLastActivity();
             centralBoardStateRepository.save(updatedCentralBoard);
         }
 

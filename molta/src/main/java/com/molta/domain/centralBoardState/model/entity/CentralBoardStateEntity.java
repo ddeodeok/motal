@@ -7,7 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -85,10 +89,34 @@ public class CentralBoardStateEntity {
     @Comment("버려진 기능 카드들")
     private List<Integer> discardedFunctionCards = new ArrayList<>(); // 버려진 기능 카드
 
+
+    // 방장 준비 상태를 설정하는 메서드 추가
+    public void setReady(boolean isReady) {
+        this.playerReadyStatus.put(this.CreatorPlayerId, isReady); // 방장 ID에 준비 상태 설정
+    }
+
     // 버려진 자원 카드들을 더미에 섞어 넣는 메서드
     public void shuffleDiscardedIntoDeck() {
         resourceDeck.addAll(discardedResourceCards);
         discardedResourceCards.clear();
         Collections.shuffle(resourceDeck);
     }
+
+    @Column(nullable = false)
+    private LocalDateTime lastActivityTime;
+    @PrePersist
+    public void onCreate() {
+        this.lastActivityTime = LocalDateTime.now();
+    }
+
+    // 방에 활동이 있을 때 호출
+    public void updateLastActivity() {
+        this.lastActivityTime = LocalDateTime.now();
+    }
+
+    // 플레이어 입장시 playerReadyStatus에 추가 메서드
+    public void addPlayer(String playerId) {
+        this.playerReadyStatus.put(playerId, false);
+    }
 }
+

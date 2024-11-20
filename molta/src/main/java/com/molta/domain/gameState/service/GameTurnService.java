@@ -1,5 +1,6 @@
 package com.molta.domain.gameState.service;
 
+import com.molta.config.WebSocketController;
 import com.molta.domain.gameState.model.entity.GameStateEntity;
 import com.molta.domain.gameState.repository.GameStateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ public class GameTurnService {
 
     @Autowired
     private GameStateRepository gameStateRepository;
+    @Autowired
+    private WebSocketController webSocketController;
 
     private boolean gameEnded = false; // 게임 종료 여부를 추적
     private String playerWhoReached12 = null; // 12점에 도달한 플레이어
@@ -93,12 +96,26 @@ public class GameTurnService {
         GameStateEntity nextPlayerState = gameStateRepository.findByGameIdAndPlayerId(gameId, nextPlayerId)
                 .orElseThrow(() -> new IllegalArgumentException("Next player game state not found"));
 
-        // 다음 플레이어의 남은 턴 처리
+        // 행동 초기화 (3번의 행동 기회)
+        nextPlayerState.setAction(3);
+
+        // 모든 플레이어의 currentPlayer를 nextPlayerId로 설정
+        for (GameStateEntity playerState : players) {
+            playerState.setCurrentPlayer(nextPlayerId); // 모든 플레이어의 `currentPlayer`를 `nextPlayerId`로 설정
+            gameStateRepository.save(playerState); // 상태 저장
+        }
+
+        // 최종 턴이 완료되었는지 체크
         if (nextPlayerState.isFinalTurn()) {
             nextPlayerState.setFinalTurnComplete(true);
         }
-        nextPlayerState.setAction(3);
+
         gameStateRepository.save(nextPlayerState);
+    }
+
+    private void updateCurrentPlayer(String gameId, String nextPlayerId) {
+        // 현재 플레이어 정보를 업데이트할 수 있는 방식으로 전달 (예: WebSocket)
+        webSocketController.sendCurrentPlayerUpdate(gameId, nextPlayerId);
     }
 
     // 현재 플레이어의 인덱스를 찾는 메서드
