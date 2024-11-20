@@ -3,10 +3,11 @@ import '../../styles/PlayerArea.css';
 import { PlayerInfo } from '../../type/types';
 type PlayerAreaProps = {
     playerName: string | null;
+    playerResourceCards: number[]; // 보유한 자원 카드 리스트
 };
 
 // const PlayerArea: React.FC = () => {
-    const PlayerArea: React.FC<PlayerAreaProps> = ({ playerName }) => {
+    const PlayerArea: React.FC<PlayerAreaProps> = ({ playerName, playerResourceCards }) => {
     return (
         <div className="player-area">
             <div className='score-area'>
@@ -14,7 +15,22 @@ type PlayerAreaProps = {
                 alt="점수배경" className="card-image" />
                 <div className="score">0</div>
             </div>  
-            <div className="resource-cards">내 자원 카드</div>
+            <div className="resource-cards">
+                <h3>내 자원 카드</h3>
+                {playerResourceCards.length > 0 ? (
+                    playerResourceCards.map((cardId, index) => (
+                        <div key={index} className="resource-card">
+                            <img
+                                src={`${process.env.PUBLIC_URL}/images/resource-${cardId}.jpg`}
+                                alt={`자원 카드 ${index + 1}`}
+                                className="card-image"
+                            />
+                        </div>
+                    ))
+                ) : (
+                    <p>자원 카드 없음</p>
+                )}
+            </div>
                 <div className="gate-area">
                     <img src={`${process.env.PUBLIC_URL}/images/gate-player.jpg`} 
                         alt="관문" className="card-image" />

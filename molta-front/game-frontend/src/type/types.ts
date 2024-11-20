@@ -20,16 +20,15 @@ export const defaultPlayerInfo: PlayerInfo = {
 };
 
 export type GameRoomProps = {
-    gameId: string;
+    gameId: String;
+    centralBoardId: string;
     resourceDeckCount: number;
     functionDeckCount: number;
-    resourceCards: number[];
-
-    
+    resourceCards: number[];    
 };
 
 export type BoardState = {
-    gameId: string;
+    gameId: string | null;
     boardState: BoardState;
     leftPlayerInfo: PlayerInfo;
     topPlayerInfo: PlayerInfo;
@@ -40,3 +39,11 @@ export type BoardState = {
     openResourceCards: number[];
     openFunctionCards: number[];
 }
+
+export type CentralBoardProps = {
+    gameId: string;  // 게임 ID 추가
+    boardState: BoardState | null;  // 중앙 보드 상태
+    handleResourceCardClick: (cardId: number, index:number) => void;  // 자원 카드 클릭 시 처리 함수
+    handleFunctionCardClick: (cardId: number, index:number) => void;  // 기능 카드 클릭 시 처리 함수
+    handleRefillResourceCards: () => void;  // 리소스 카드 새로 오픈하기
+};

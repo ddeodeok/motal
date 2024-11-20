@@ -124,6 +124,8 @@ const RoomList: React.FC<RoomListProps> = ({ onLogout }) =>  {
             });
             const boardStateResponse = await axios.get(`/room/${centralBoardId}/board-state`);
             alert("방에 참가하였습니다!");
+            // 로컬 스토리지에서 호스트 상태를 false로 설정
+            localStorage.setItem("isHost", "false");
             navigate(`/game/${centralBoardId}`, {
                 state: {
                     boardState: boardStateResponse.data

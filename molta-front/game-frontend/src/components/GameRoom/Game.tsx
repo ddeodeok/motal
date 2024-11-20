@@ -5,51 +5,33 @@ import GameRoom from './GameRoom';
 import '../../styles/Game.css';
 // import { PlayerInfo } from '../../type/types';
 
-// const leftPlayerInfo: PlayerInfo = {
-//     playerName: "왼쪽 플레이어",
-//     score: 0,
-//     gateCards: [null, null],
-//     totalResourceCards: 10,
-//     gemCount: 2,
-//     functionCards: [1, 2, 3]
-// };
-
-// const topPlayerInfo: PlayerInfo = {
-//     playerName: "위쪽 플레이어",
-//     score: 0,
-//     gateCards: [null, null],
-//     totalResourceCards: 10,
-//     gemCount: 2,
-//     functionCards: [1, 2, 3]
-// };
-
-// const rightPlayerInfo: PlayerInfo = {
-//     playerName: "오른쪽 플레이어",
-//     score: 0,
-//     gateCards: [null, null],
-//     totalResourceCards: 10,
-//     gemCount: 2,
-//     functionCards: [1, 2, 3]
-// };
-
 const Game: React.FC = () => {
-    const { gameId } = useParams<{ gameId: string }>();
+    const { centralBoardId } = useParams<{ centralBoardId: string }>();
     const location = useLocation();
+    
+    // 상태 관리: 게임 시작 전에 gameId는 null
+    const [gameId, setGameId] = useState<string | null>(null);
     const { resourceDeckCount, functionDeckCount, resourceCards } = location.state || {};
+    // 게임 시작 함수에서 gameId 설정
+    const handleGameStart = (newGameId: string) => {
+        setGameId(newGameId);  // 게임 시작 시 받은 gameId를 상태에 저장
+    };
+
     return (
         <div className="game-container">
-            <h1 className="game-room-title">게임방: {gameId}</h1>
+            <h1 className="game-room-title">게임방: {centralBoardId}</h1>
             <div className="game-main-layout">
-                <GameRoom 
-                    gameId={gameId || ""} // 기본값을 빈 문자열로 지정
-                    resourceDeckCount={resourceDeckCount}
-                    functionDeckCount={functionDeckCount}
-                    resourceCards={resourceCards}
-                    // leftPlayerInfo={leftPlayerInfo}
-                    // topPlayerInfo={topPlayerInfo}
-                    // rightPlayerInfo={rightPlayerInfo}
-                />  {/* 중앙 게임 화면 */}
-                <GameSidebar gameId={gameId} />  {/* 오른쪽 사이드바 */}
+                    <GameRoom 
+                        gameId={gameId || ""}
+                        centralBoardId={centralBoardId || ""} 
+                        resourceDeckCount={resourceDeckCount}
+                        functionDeckCount={functionDeckCount}
+                        resourceCards={resourceCards}
+                    /> 
+                <GameSidebar 
+                centralBoardId={centralBoardId}
+                setGameId={handleGameStart} 
+                /> 
             </div>
         </div>
     );

@@ -55,7 +55,7 @@ const App: React.FC = () => {
                 <Route path="/" element={isAuthenticated ? <Navigate to="/room-list" /> : <Login onLogin={handleLogin} />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/room-list" element={isAuthenticated ? <RoomList onLogout={handleLogout} /> : <Navigate to="/" />} />
-                <Route path="/game/:gameId" element={isAuthenticated ? <Game /> : <Navigate to="/" />} />
+                <Route path="/game/:centralBoardId" element={isAuthenticated ? <Game /> : <Navigate to="/" />} />
             </Routes>
         </Router>
     );
