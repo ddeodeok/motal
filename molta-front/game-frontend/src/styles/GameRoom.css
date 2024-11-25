@@ -12,3 +12,63 @@
     height: 100%; 
     padding-left: 3%;
 }
+
+/* 모달 스타일 */
+.discard-modal {
+    display: block;  /* 모달이 열리면 보이도록 설정 */
+    position: fixed;
+    top: 45%;
+    left: 44%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 20px;
+    z-index: 1000;
+    border-radius: 8px;  /* 모달 테두리 둥글게 */
+    width: 80%;  /* 모달 너비 제한 */
+    max-width: 600px;  /* 최대 너비 설정 */
+    overflow-y: auto;
+}
+
+  /* 자원 카드들을 가로로 정렬하고 크기를 작게 설정 */
+.discard-modal .card-container {
+    display: flex;  /* Flexbox로 자식 요소들을 가로로 정렬 */
+    justify-content: space-evenly;  /* 카드들 사이에 동일한 간격을 배치 */
+    flex-wrap: wrap;  /* 카드들이 넘치면 줄 바꿈 */
+}
+
+  /* 카드 이미지 스타일 */
+.discard-modal .card-container .card-image {
+    width: 60px;  /* 카드 이미지의 너비 설정 */
+    height: 90px;  /* 카드 이미지의 높이 설정 */
+    object-fit: cover;  /* 이미지가 영역에 맞게 잘리도록 설정 */
+    margin: 5px;  /* 카드들 간 간격 설정 */
+    transition: transform 0.3s, box-shadow 0.3s;  /* 카드 호버 효과에 부드러운 애니메이션 추가 */
+}
+
+  /* 카드에 호버했을 때의 스타일 */
+.discard-modal .card-container .card-image:hover {
+    transform: scale(1.1);  /* 카드 크기 살짝 확대 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);  /* 그림자 효과 */
+    cursor: pointer;  /* 카드 클릭 가능 표시 */
+}
+
+  /* 카드 클릭 시 처리 함수 */
+.discard-modal .card-container div {
+    cursor: pointer;
+}
+
+  /* 모달 버튼 */
+.discard-modal button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.discard-modal button:hover {
+    background-color: #0056b3;
+}

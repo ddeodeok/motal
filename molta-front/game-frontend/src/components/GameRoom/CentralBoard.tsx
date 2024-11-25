@@ -20,8 +20,8 @@ const CentralBoard: React.FC<CentralBoardProps> = ({ boardState, handleResourceC
     } = boardState;
 
     
-console.log('boardState',boardState)
-console.log("resourceCards:", openResourceCards)
+// console.log('boardState',boardState)
+// console.log("resourceCards:", openResourceCards)
 
     return (
         <div className="central-board">
@@ -37,7 +37,9 @@ console.log("resourceCards:", openResourceCards)
                         <div key={index} 
                         className="resource-deck" 
                         onClick={() => handleResourceCardClick(cardId, index)}>
-                            <img src={`${process.env.PUBLIC_URL}/images/resource-${cardId}.jpg`} alt={`자원 카드 ${index + 1}`} className="card-image" />
+                            <img src={`${process.env.PUBLIC_URL}/images/resource-${cardId}.jpg`} 
+                            alt={`자원 카드 ${index + 1}`} 
+                            className="card-image" />
                         </div>
                     ))}
                 </div>

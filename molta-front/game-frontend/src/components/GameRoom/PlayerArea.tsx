@@ -16,12 +16,11 @@ type PlayerAreaProps = {
                 <div className="score">0</div>
             </div>  
             <div className="resource-cards">
-                <h3>내 자원 카드</h3>
                 {playerResourceCards.length > 0 ? (
                     playerResourceCards.map((cardId, index) => (
                         <div key={index} className="resource-card">
                             <img
-                                src={`${process.env.PUBLIC_URL}/images/resource-${cardId}.jpg`}
+                                src={`${process.env.PUBLIC_URL}/images/resource-4${cardId}.jpg`}
                                 alt={`자원 카드 ${index + 1}`}
                                 className="card-image"
                             />

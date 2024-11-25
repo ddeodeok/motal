@@ -9,7 +9,7 @@ type OpponentAreaProps = {
 
 const OpponentArea: React.FC<OpponentAreaProps> = ( {position, playerInfo}) => {
 
-    
+    console.log(playerInfo)
     return (
         <div className={`opponent-area ${position}`}>
             <div className='top-area'>

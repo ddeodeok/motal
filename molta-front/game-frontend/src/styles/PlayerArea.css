@@ -21,8 +21,20 @@
     border: 1px solid black;
     position: inherit;
 }
-
+.gate-area .card-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+}
 .player-area .resource-cards {
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
+    gap : 5px;
+    margin: 5px 0;
+    align-items: flex-end;
     width: 40%;
     height: 80%;
     border: 1px solid black;
@@ -60,4 +72,21 @@
     position: relative;
     top: -20%;
     left: 0.3%
+}
+
+.resource-card {
+    height: 140px; /* 카드의 기본 높이 */
+    width: 100px;  /* 카드의 기본 너비, 필요에 따라 조정 가능 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* 카드가 틀을 넘지 않도록 자르기 */
+    position: relative;
+}
+
+.player-area .resource-cards .card-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* 이미지 비율에 맞게 크기 조절 */
+    position: absolute; /* 이미지 위치를 절대적으로 지정하여, 카드 영역 안에서 비율에 맞게 조정 */
 }
