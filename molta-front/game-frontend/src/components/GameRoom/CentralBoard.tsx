@@ -9,9 +9,14 @@ type CentralBoardProps = {
     boardState: BoardState | null;
     handleResourceCardClick: (cardId: number, index: number) => void;  // 자원 카드 클릭 시 처리 함수
     handleFunctionCardClick: (cardId: number, index: number) => void;  // 기능 카드 클릭 시 처리 함수
+    handleResetResourceCards: () => void; // 자원카드 리셋
 };
 
-const CentralBoard: React.FC<CentralBoardProps> = ({ boardState, handleResourceCardClick, handleFunctionCardClick }) => {
+const CentralBoard: React.FC<CentralBoardProps> = ({ 
+    boardState, 
+    handleResourceCardClick, 
+    handleFunctionCardClick,
+    handleResetResourceCards }) => {
     if (!boardState) {
         return <div>Loading...</div>;
     }
@@ -20,8 +25,9 @@ const CentralBoard: React.FC<CentralBoardProps> = ({ boardState, handleResourceC
     } = boardState;
 
     
-// console.log('boardState',boardState)
-// console.log("resourceCards:", openResourceCards)
+console.log('boardState',boardState)
+console.log("resourceCards:", openResourceCards)
+console.log("functionCards:", openFunctionCards)
 
     return (
         <div className="central-board">
@@ -43,13 +49,23 @@ const CentralBoard: React.FC<CentralBoardProps> = ({ boardState, handleResourceC
                         </div>
                     ))}
                 </div>
+                <button onClick={handleResetResourceCards} className="reset-resource-button">
+                    자원 카드 새로 고침
+                </button>
                 <div className="function-cards">
                     <div className="function-deck">
                         <img src={`${process.env.PUBLIC_URL}/images/gem.jpg`} alt="기능 카드 덱" className="card-image" />
                         <div className="deck-count">{functionDeckCount}장</div>
                     </div>
-                    <div className="card">기능 카드 1</div>
-                    <div className="card">기능 카드 2</div>
+                    {openFunctionCards.map((cardId, index) => (
+                        <div key={index} 
+                        className="resource-deck" 
+                        onClick={() => handleResourceCardClick(cardId, index)}>
+                            <img src={`${process.env.PUBLIC_URL}/images/function-${cardId}.jpg`} 
+                            alt={`기능 카드 ${index + 1}`} 
+                            className="card-image" />
+                        </div>
+                    ))}
                 </div>
             </div>
             {/* 리소스 카드 새로 오픈하기 버튼 */}

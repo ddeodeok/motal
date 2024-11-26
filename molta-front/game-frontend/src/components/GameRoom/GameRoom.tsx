@@ -57,6 +57,12 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
             console.error("자원 카드 데이터 가져오기 실패:", error);
         }
     };
+      // 새로운 게임에 대한 상태 초기화
+    const initializeGameState = () => {
+        localStorage.removeItem('gameId');  // 이전 게임 정보 삭제
+        setPlayerResourceCards([]);  // 자원 카드 목록 초기화
+        setCurrentPlayer(null);  // 현재 플레이어 초기화
+    };
 
     const fetchCurrentPlayer = async () => {
         const gameId = localStorage.getItem('gameId');
@@ -64,11 +70,33 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
         console.log('ddddddd',response)
         return response.data;
     }
+     // 자원 카드 새로 고침 함수
+    const handleResetResourceCards = async () => {
+        const gameId = localStorage.getItem('gameId');
+        const playerId = localStorage.getItem('playerId');
+
+        if (gameId && playerId) {
+        try {
+            const response = await axios.post('/game/reset-central-resource-cards', {
+            gameId: gameId,
+            playerId: playerId,
+            centralBoardId: centralBoardId,
+            });
+
+            console.log(response.data);
+            // 새로 고침이 성공하면 중앙 보드 상태를 다시 가져옵니다
+            fetchBoardState();
+        } catch (error) {
+            console.error('자원 카드 새로 고침 실패:', error);
+        }
+        }
+    };
 
     useEffect(() => {
-         if (currentPlayer) {
-    fetchPlayerResourceCards(currentPlayer);
-  }
+        initializeGameState();
+        if (currentPlayer) {
+            fetchPlayerResourceCards(currentPlayer);
+        }
         const fetchPlayers = async () => {
             try {
                 console.log('central:',centralBoardId)
@@ -263,6 +291,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
                 boardState={boardState}
                 handleResourceCardClick={handleResourceCardClick}
                 handleFunctionCardClick={handleFunctionCardClick}
+                handleResetResourceCards={handleResetResourceCards}
             />
             <PlayerArea 
                 playerName={currentPlayer}
