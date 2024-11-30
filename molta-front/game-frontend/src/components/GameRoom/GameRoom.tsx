@@ -21,6 +21,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [cardToDiscard, setCardToDiscard] = useState<number | null>(null);  // 선택된 카드 ID를 저장
     const [cardIndex, setCardIndex] = useState<number| null>(null);
+    const [readyRevealCard1, setReadyRevealCard1] = useState<number | null>(null);
+    const [readyRevealCard2, setReadyRevealCard2] = useState<number | null>(null);
 
     // 카드 선택 함수
     const handleCardSelect = (cardId: number) => {
@@ -45,31 +47,40 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
     };
 
     const fetchPlayerResourceCards = async (playerId: string) => {
+        const gameId = localStorage.getItem('gameId');
+        if (!gameId) {
+            console.log("게임 ID가 없으므로 자원 카드 목록을 불러올 수 없습니다.");
+            return;
+        }
         try {
             const gameId = localStorage.getItem('gameId');
             const response = await axios.get(`/game/${gameId}/player/${playerId}/resource-cards`);
             const gameState = response.data;
-            const resourceCards: number[] = gameState.resourceCards;   
-            console.log('RESresourceCards:', resourceCards)
-            setPlayerResourceCards(resourceCards); 
+            const resourceCards: number[] = gameState.resourceCards;  
+            const readyRevealCard1 = gameState.readyRevealCard1;
+            const readyRevealCard2 = gameState.readyRevealCard2;
+            setPlayerResourceCards(resourceCards);
+            setReadyRevealCard1(readyRevealCard1);
+            setReadyRevealCard2(readyRevealCard2);
             return gameState 
         } catch (error) {
             console.error("자원 카드 데이터 가져오기 실패:", error);
         }
     };
+
       // 새로운 게임에 대한 상태 초기화
     const initializeGameState = () => {
         localStorage.removeItem('gameId');  // 이전 게임 정보 삭제
         setPlayerResourceCards([]);  // 자원 카드 목록 초기화
-        setCurrentPlayer(null);  // 현재 플레이어 초기화
+        // setCurrentPlayer(null);  // 현재 플레이어 초기화
     };
 
     const fetchCurrentPlayer = async () => {
         const gameId = localStorage.getItem('gameId');
         const response = await axios.get(`/game/${gameId}/current-player`);
-        console.log('ddddddd',response)
         return response.data;
     }
+
      // 자원 카드 새로 고침 함수
     const handleResetResourceCards = async () => {
         const gameId = localStorage.getItem('gameId');
@@ -93,7 +104,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
     };
 
     useEffect(() => {
-        initializeGameState();
+        // initializeGameState();
         if (currentPlayer) {
             fetchPlayerResourceCards(currentPlayer);
         }
@@ -265,13 +276,42 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
 
 
        // 기능 카드 클릭 시 처리 함수
-    const handleFunctionCardClick = (cardId: number) => {
+    const handleFunctionCardClick = async (cardId: number,index: number) => {
         if (currentPlayer) {
-            axios.post(`/game/${centralBoardId}/place-function-card`, { playerId: currentPlayer, cardId })
-                .then(() => {
+            // 관문에 배치할 카드가 아직 한 군데라도 비어있는지 확인
+            const gameId = localStorage.getItem('gameId');
+            const response = await axios.get(`/game/${gameId}/player/${currentPlayer}/gate-status`);
+            
+            const { readyRevealCard1, readyRevealCard2 } = response.data;
+            // 비어있는 관문을 찾아 해당 카드 배치
+            if (!readyRevealCard1) {
+                // 첫 번째 관문에 배치
+                axios.post(`/game/take-function-card-to-gate`, {
+                    playerId: currentPlayer,
+                    functionCardId: cardId,
+                    gameId: gameId,
+                    gateNumber: 1,
+                    index: index,
+                }).then(() => {
                     fetchBoardState();  // 보드 상태 갱신
-                })
-                .catch(error => console.error('기능 카드 관문에 배치 실패:', error));
+                    fetchPlayerResourceCards(currentPlayer);
+                }).catch(error => console.error('기능 카드 관문에 배치 실패:', error));
+            } else if (!readyRevealCard2) {
+                // 두 번째 관문에 배치
+                axios.post(`/game/take-function-card-to-gate`, {
+                    playerId: currentPlayer,
+                    functionCardId: cardId,
+                    gameId: gameId,
+                    gateNumber: 2,
+                    index: index,
+                }).then(() => {
+                    fetchBoardState();  // 보드 상태 갱신
+                    fetchPlayerResourceCards(currentPlayer);
+                }).catch(error => console.error('기능 카드 관문에 배치 실패:', error));
+            } else {
+                // 두 관문이 다 차 있으면, 알림 또는 처리
+                alert("두 개의 관문이 이미 다 차 있습니다.");
+            }
         }
     };
 
@@ -296,6 +336,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
             <PlayerArea 
                 playerName={currentPlayer}
                 playerResourceCards={playerResourceCards}
+                readyRevealCard1={readyRevealCard1}
+                readyRevealCard2={readyRevealCard2}
             />
             <div>
             {modalOpen && (

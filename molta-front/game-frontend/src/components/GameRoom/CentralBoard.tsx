@@ -25,8 +25,8 @@ const CentralBoard: React.FC<CentralBoardProps> = ({
     } = boardState;
 
     
-console.log('boardState',boardState)
-console.log("resourceCards:", openResourceCards)
+// console.log('boardState',boardState)
+// console.log("resourceCards:", openResourceCards)
 console.log("functionCards:", openFunctionCards)
 
     return (
@@ -49,9 +49,11 @@ console.log("functionCards:", openFunctionCards)
                         </div>
                     ))}
                 </div>
+
                 <button onClick={handleResetResourceCards} className="reset-resource-button">
                     자원 카드 새로 고침
                 </button>
+
                 <div className="function-cards">
                     <div className="function-deck">
                         <img src={`${process.env.PUBLIC_URL}/images/gem.jpg`} alt="기능 카드 덱" className="card-image" />
@@ -60,7 +62,7 @@ console.log("functionCards:", openFunctionCards)
                     {openFunctionCards.map((cardId, index) => (
                         <div key={index} 
                         className="resource-deck" 
-                        onClick={() => handleResourceCardClick(cardId, index)}>
+                        onClick={() => handleFunctionCardClick(cardId, index)}>
                             <img src={`${process.env.PUBLIC_URL}/images/function-${cardId}.jpg`} 
                             alt={`기능 카드 ${index + 1}`} 
                             className="card-image" />
