@@ -45,12 +45,16 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
             console.error("중앙 보드 상태 가져오기 실패:", error);
         }
     };
-
-    const fetchPlayerResourceCards = async (playerId: string) => {
+    
+    const fetchPlayerResourceCards = async (playerId: string | null) => {
+        if (!playerId) {
+            console.error('유효한 playerId가 아닙니다.');
+            return null;  // null일 경우 함수를 종료
+        }
         const gameId = localStorage.getItem('gameId');
         if (!gameId) {
             console.log("게임 ID가 없으므로 자원 카드 목록을 불러올 수 없습니다.");
-            return;
+            return null;
         }
         try {
             const gameId = localStorage.getItem('gameId');
@@ -65,6 +69,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
             return gameState 
         } catch (error) {
             console.error("자원 카드 데이터 가져오기 실패:", error);
+            return null;
         }
     };
 
@@ -213,6 +218,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
         if (currentPlayer) {
             // 자원 카드를 5장 이상 보유하고 있는지 확인
             const playerState = await fetchPlayerResourceCards(currentPlayer);  // 현재 플레이어의 상태 가져오기
+            if (playerState)
             if (playerResourceCards.length >= playerState.maxResourceCardCount) {
                 // 자원 카드를 5장 이상 보유한 경우 모달 창 띄우기
                 setModalOpen(true);
@@ -338,6 +344,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
                 playerResourceCards={playerResourceCards}
                 readyRevealCard1={readyRevealCard1}
                 readyRevealCard2={readyRevealCard2}
+                fetchPlayerResourceCards={fetchPlayerResourceCards}
             />
             <div>
             {modalOpen && (
