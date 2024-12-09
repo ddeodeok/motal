@@ -20,6 +20,8 @@ type PlayerAreaProps = {
     readyRevealCard1: number | null;
     readyRevealCard2: number | null;
     fetchPlayerResourceCards: (playerId: string | null) => Promise<GameState | null>; 
+    currentTurnPlayer: String | null;
+    firstPlayer: String | null;
 };
 
 interface PlayerFunctionCard {
@@ -33,7 +35,9 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({
     playerResourceCards, 
     readyRevealCard1, 
     readyRevealCard2,
-    fetchPlayerResourceCards  
+    fetchPlayerResourceCards,
+    currentTurnPlayer,
+    firstPlayer
 }) => {
     const [selectedFunctionCard, setSelectedFunctionCard] = useState<{ cardId: number; gateNumber: number } | null>(null);
     const [selectedResourceCard, setSelectedResourceCard] = useState<{ cardId: number, index: number }[]>([]);  
@@ -44,6 +48,7 @@ const PlayerArea: React.FC<PlayerAreaProps> = ({
     const [blueCards, setBlueCards] = useState<PlayerFunctionCard[]>([]);
     const [redCards, setRedCards] = useState<PlayerFunctionCard[]>([]);
     const [greenCards, setGreenCards] = useState<PlayerFunctionCard[]>([]);
+
 
     const sortPlayerFunctionCardsByType = (cards: PlayerFunctionCard[]) => {
         const blueCards = cards.filter(card => card.functionCardType === 'blue');
@@ -152,14 +157,13 @@ const handleFetchPlayerData = async (playerName: any) => {
     if (gameState && gameState.functionCards) {
         const playerFunctionCards: PlayerFunctionCard[] = gameState.functionCards;
         const { blueCards, redCards, greenCards } = sortPlayerFunctionCardsByType(playerFunctionCards);
-        console.log('Blue Cards:', blueCards);
-        console.log('Red Cards:', redCards);
-        console.log('Green Cards:', greenCards);
         setBlueCards(blueCards);
         setRedCards(redCards);
         setGreenCards(greenCards);
     } else {
-        console.error('gameState is null');
+        setBlueCards([]);
+        setRedCards([]);
+        setGreenCards([]);
     }
 };
 
@@ -167,17 +171,20 @@ const handleFetchPlayerData = async (playerName: any) => {
         handleFetchPlayerData(playerName);
         fetchActiveFunctionCards(); // 컴포넌트 로드 시 활성화된 기능 카드 목록 가져오기
     }, [playerName, finalSeletedFunctionCards]);
+
+    const isCurrentTurnPlayer = playerName === currentTurnPlayer;
+    console.log('isCurrentPlayer:', isCurrentTurnPlayer)
     
 
     return (
-        <div className="player-area">
+        <div className={`player-area ${isCurrentTurnPlayer ? 'yellow-border' : ''}`}>
             <div className='score-area'>
                 <img src={`${process.env.PUBLIC_URL}/images/scroll-background2.png`} 
                 alt="점수배경" className="card-image" />
                 <div className="score">0</div>
             </div>  
             <div className="resource-cards">
-                {playerResourceCards.length > 0 ? (
+                {playerResourceCards && playerResourceCards.length > 0 ? (
                     playerResourceCards.map((cardId, index) => (
                         <div 
                         key={index} 
@@ -206,6 +213,15 @@ const handleFetchPlayerData = async (playerName: any) => {
                 </div>
             </div>
                 <div className="gate-area">
+                    {firstPlayer === playerName && (
+                        <div className="gateway">
+                            <img 
+                                src={`${process.env.PUBLIC_URL}/images/first-player.jpg`} 
+                                alt="First Player" 
+                                className="first-player-image" 
+                            />
+                        </div>
+                    )}
                     <img src={`${process.env.PUBLIC_URL}/images/gate-player.jpg`} 
                         alt="관문" className="card-image" />
                       {/* 1번 관문 */}
@@ -236,7 +252,7 @@ const handleFetchPlayerData = async (playerName: any) => {
                     </div>
             </div>
             <div className="function-cards">
-                {/* Blue cards */}
+
                 <div className="card-category">
                     <div className="card-container">
                         {blueCards.map(card => (
@@ -251,7 +267,6 @@ const handleFetchPlayerData = async (playerName: any) => {
                     </div>
                 </div>
 
-                {/* Red cards */}
                 <div className="card-category">
                     <div className="card-container">
                         {redCards.map(card => (
@@ -266,7 +281,6 @@ const handleFetchPlayerData = async (playerName: any) => {
                     </div>
                 </div>
 
-                {/* Green cards */}
                 <div className="card-category">
                     <div className="card-container">
                         {greenCards.map(card => (
@@ -281,12 +295,6 @@ const handleFetchPlayerData = async (playerName: any) => {
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
 
 
 

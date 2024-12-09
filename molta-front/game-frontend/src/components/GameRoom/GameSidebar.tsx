@@ -33,13 +33,11 @@ const GameSidebar: React.FC<GameSidebarProps> = ({ centralBoardId, setGameId }) 
     };
 
     const handleStartGame = () => {
-        console.log(centralBoardId,centralBoardId)
         axios.post(`/room/${centralBoardId}/start`)
             .then((response) => {
                 const gameId = response.data.gameId;
                 setGameId(gameId);
                 localStorage.setItem('gameId',gameId);
-                console.log('gameId',gameId)
                 alert("게임이 시작되었습니다!")
             })
             .catch(error => console.error("게임 시작 오류:", error));

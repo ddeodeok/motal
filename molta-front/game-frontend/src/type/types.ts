@@ -3,10 +3,34 @@ export type PlayerInfo = {
     playerName: string;
     score: number;
     gateCards: (number | null)[];
-    totalResourceCards: number;
-    gemCount: number;
+    totalResourceCards: number[];
+    gemCount: number[];
     functionCards: number[];
 };
+
+export interface PlayerState {
+    resourceCards: number[]; 
+    currentScore: number;    
+    functionCards: number[]; 
+    readyRevealCard1: number | null; 
+    readyRevealCard2: number | null; 
+    action: number;          
+    maxResourceCardCount: number;  
+    currentPlayer: string;    
+    playerId: String;
+}
+
+export type OpponentPlayerData = {
+    playerId: String;
+    action: number;
+    functionCards: number[];
+    maxResourceCardCount: number;
+    readyRevealCard1: number | null;
+    readyRevealCard2: number | null;
+    resourceCards: number[];
+    currentScore: number;
+    
+}
 
 // 기본값 설정 (GameRoom 또는 다른 파일에 설정)
 export const defaultPlayerInfo: PlayerInfo = {
@@ -14,8 +38,8 @@ export const defaultPlayerInfo: PlayerInfo = {
     playerName: "대기 중",
     score: 0,
     gateCards: [null, null],
-    totalResourceCards: 0,
-    gemCount: 0,
+    totalResourceCards: [],
+    gemCount: [],
     functionCards: []
 };
 
@@ -38,6 +62,8 @@ export type BoardState = {
     resourceCards: number[];
     openResourceCards: number[];
     openFunctionCards: number[];
+    creatorPlayerId: string;
+    currentPlayer: string;
 }
 
 export type CentralBoardProps = {

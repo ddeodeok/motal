@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { useParams, useLocation  } from 'react-router-dom';
+import { useParams, useLocation, useNavigate  } from 'react-router-dom';
 import CentralBoard from './CentralBoard';
 import PlayerArea from './PlayerArea';
 import OpponentArea from './OpponentArea';
@@ -23,7 +23,13 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
     const [cardIndex, setCardIndex] = useState<number| null>(null);
     const [readyRevealCard1, setReadyRevealCard1] = useState<number | null>(null);
     const [readyRevealCard2, setReadyRevealCard2] = useState<number | null>(null);
+    const [creatorPlayer, setCreatorPlayer] = useState<String>();
+    const [currentTurnPlayer, setCurrentTurnPlayer] = useState<string | null>(null);
+    const [firstPlayer, setFirstPlayer] = useState<string | null>(null);
+    const [playersData, setPlayersData] = useState<any[]>([]);
+    
 
+    const navigate = useNavigate();
     // 카드 선택 함수
     const handleCardSelect = (cardId: number) => {
         setCardToDiscard(cardId);  // 선택된 카드를 상태에 저장
@@ -36,11 +42,12 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
         setModalOpen(false);  // 모달을 닫습니다
     };
 
-
     const fetchBoardState = async () => {
         try {
             const response = await axios.get(`/room/${centralBoardId}/board-state`);
+            console.log('gameRoom-BoardState:', response.data)
             setBoardState(response.data);
+            setCurrentTurnPlayer(response.data.currentPlayer)
         } catch (error) {
             console.error("중앙 보드 상태 가져오기 실패:", error);
         }
@@ -49,7 +56,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
     const fetchPlayerResourceCards = async (playerId: string | null) => {
         if (!playerId) {
             console.error('유효한 playerId가 아닙니다.');
-            return null;  // null일 경우 함수를 종료
+            return null;  
         }
         const gameId = localStorage.getItem('gameId');
         if (!gameId) {
@@ -58,7 +65,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
         }
         try {
             const gameId = localStorage.getItem('gameId');
-            const response = await axios.get(`/game/${gameId}/player/${playerId}/resource-cards`);
+            const response = await axios.get(`/game/${centralBoardId}/player/${playerId}/resource-cards`);
             const gameState = response.data;
             const resourceCards: number[] = gameState.resourceCards;  
             const readyRevealCard1 = gameState.readyRevealCard1;
@@ -66,12 +73,60 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
             setPlayerResourceCards(resourceCards);
             setReadyRevealCard1(readyRevealCard1);
             setReadyRevealCard2(readyRevealCard2);
+            setCurrentTurnPlayer(gameState.currentPlayer);
             return gameState 
         } catch (error) {
             console.error("자원 카드 데이터 가져오기 실패:", error);
             return null;
         }
     };
+
+    // 게임 시작 시 플레이어 목록 가져오기
+    const fetchPlayersResourceCards = async () => {
+        const gameId = localStorage.getItem('gameId');
+        if (!gameId) {
+            console.log("게임 ID가 없으므로 자원 카드 목록을 불러올 수 없습니다.");
+            return;
+        }
+        try {
+            const response = await axios.get(`/room/${centralBoardId}/players`);
+            const players = response.data;  // 서버에서 받아온 플레이어 목록
+            setPlayers(players);  // 플레이어 목록을 상태 변수로 설정
+            // 각 플레이어의 상태 처리
+            const playerDataList = [];
+            for (const playerId of players) {
+                const playerStateResponse = await axios.get(`/game/${centralBoardId}/player/${playerId}/resource-cards`);
+                const playerState = playerStateResponse.data;
+                const playerIdSelf = localStorage.getItem("playerId");
+                if (playerId === playerIdSelf) {
+                    // 현재 플레이어의 데이터는 상태 변수에 설정
+                    setPlayerResourceCards(playerState.resourceCards);
+                    setReadyRevealCard1(playerState.readyRevealCard1);
+                    setReadyRevealCard2(playerState.readyRevealCard2);
+                    setCurrentTurnPlayer(playerState.currentPlayer);
+                }
+                // 플레이어 데이터를 배열에 추가
+                playerDataList.push({
+                    playerId,
+                    resourceCards: playerState.resourceCards,
+                    currentScore: playerState.currentScore,
+                    functionCards: playerState.functionCards,
+                    readyRevealCard1: playerState.readyRevealCard1,
+                    readyRevealCard2: playerState.readyRevealCard2,
+                    action: playerState.action,
+                    maxResourceCardCount: playerState.maxResourceCardCount,
+                });
+            }
+            setPlayersData(playerDataList);  // 모든 플레이어의 데이터를 상태로 저장
+            console.log('playerData:', playerDataList)
+
+        } catch (error) {
+            console.error("플레이어 정보 가져오기 실패:", error);
+        }
+    };
+
+
+
 
       // 새로운 게임에 대한 상태 초기화
     const initializeGameState = () => {
@@ -82,7 +137,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
 
     const fetchCurrentPlayer = async () => {
         const gameId = localStorage.getItem('gameId');
-        const response = await axios.get(`/game/${gameId}/current-player`);
+        console.log('centralBoardId',centralBoardId)
+        const response = await axios.get(`/game/${centralBoardId}/current-player`);
         return response.data;
     }
 
@@ -102,6 +158,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
             console.log(response.data);
             // 새로 고침이 성공하면 중앙 보드 상태를 다시 가져옵니다
             fetchBoardState();
+            fetchPlayerResourceCards(currentPlayer);
         } catch (error) {
             console.error('자원 카드 새로 고침 실패:', error);
         }
@@ -142,6 +199,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
         };
         fetchBoardState();
         fetchPlayers();
+        fetchPlayersResourceCards();
         
 
         // WebSocket 연결을 위한 SockJS 객체 생성
@@ -164,9 +222,12 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
                  // 주제 구독 (플레이어가 방에 들어왔을 때 알림을 받기 위함)
                 
                 client.subscribe(`/topic/room/${centralBoardId}/game-start`, (message: any) => {
-                    const gameId = message.body;
+                    const data = JSON.parse(message.body);
+                    const gameId = data.gameId;
+                    const firstPlayer = data.firstPlayer;
                     localStorage.setItem('gameId',gameId);
-                    console.log("Received gameId:", gameId); 
+                    setFirstPlayer(firstPlayer);
+                    fetchBoardState();
                 })    
                 client.subscribe(`/topic/room/${centralBoardId}/player-joined`, (message: any) => {
                     const data = JSON.parse(message.body);
@@ -182,6 +243,12 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
                         console.log('Invalid message type received:', data.type);
                     }
                 });
+                client.subscribe(`/topic/room/${centralBoardId}/force-logout`,(message) => {
+                    console.log('메세지오나?;',message)
+                    alert('방이 없어졌습니다.');
+                    navigate('/room-list');
+                })
+
                 client.subscribe(`/topic/room/${centralBoardId}/state`, (message: any) =>{
                     console.log("Game state update received:", message);
                     fetchBoardState();
@@ -202,7 +269,10 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
                 client.deactivate();
             }
         };
-    }, [centralBoardId,currentPlayer]);
+    }, [centralBoardId,currentPlayer,currentTurnPlayer]);
+
+
+    
     // 자원 카드 클릭 시 처리 함수
     const handleResourceCardClick = async (cardId: number, index: number) => {
         const gameIdFromLocalStorage = localStorage.getItem('gameId');
@@ -330,14 +400,24 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
     return (
         
         <div className="game-room">
-            <OpponentArea position="left" playerInfo={players[0] || defaultPlayerInfo} />
-            <OpponentArea position="top" playerInfo={players[1] || defaultPlayerInfo} />
-            <OpponentArea position="right" playerInfo={players[2] || defaultPlayerInfo} />
+            <OpponentArea position="left" playerInfo={players[0] || defaultPlayerInfo}
+            boardState={boardState}
+            firstPlayer={firstPlayer}
+            currentTurnPlayer={currentTurnPlayer}/>
+            <OpponentArea position="top" playerInfo={players[1] || defaultPlayerInfo}
+            boardState={boardState}
+            firstPlayer={firstPlayer}
+            currentTurnPlayer={currentTurnPlayer} />
+            <OpponentArea position="right" playerInfo={players[2] || defaultPlayerInfo}
+            boardState={boardState}
+            firstPlayer={firstPlayer}
+            currentTurnPlayer={currentTurnPlayer} />
             <CentralBoard 
                 boardState={boardState}
                 handleResourceCardClick={handleResourceCardClick}
                 handleFunctionCardClick={handleFunctionCardClick}
                 handleResetResourceCards={handleResetResourceCards}
+                
             />
             <PlayerArea 
                 playerName={currentPlayer}
@@ -345,6 +425,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
                 readyRevealCard1={readyRevealCard1}
                 readyRevealCard2={readyRevealCard2}
                 fetchPlayerResourceCards={fetchPlayerResourceCards}
+                currentTurnPlayer={currentTurnPlayer}
+                firstPlayer={firstPlayer}
             />
             <div>
             {modalOpen && (

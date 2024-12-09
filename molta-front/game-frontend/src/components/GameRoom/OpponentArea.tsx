@@ -1,19 +1,45 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import '../../styles/OpponentArea.css';
-import { PlayerInfo } from '../../type/types';
+import { PlayerInfo, BoardState, OpponentPlayerData } from '../../type/types';
 
 type OpponentAreaProps = {
     position: "left" | "top" | "right";
     playerInfo: PlayerInfo;
+    boardState: BoardState;
+    currentTurnPlayer: String | null;
+    firstPlayer: string | null;
+    // playersData: OpponentPlayerData;
 };
 
-const OpponentArea: React.FC<OpponentAreaProps> = ( {position, playerInfo}) => {
+const OpponentArea: React.FC<OpponentAreaProps> = ( {position, 
+    playerInfo, 
+    boardState,
+    currentTurnPlayer,
+    firstPlayer
+    }) => {
+    const isCreator = playerInfo.playerId === boardState.creatorPlayerId;
 
-    // console.log(playerInfo)
+
+    useEffect(() => {
+
+    })
+    const isCurrentTurnPlayer = playerInfo.playerId === currentTurnPlayer;
+    console.log('누가 현재',currentTurnPlayer)
+
+
     return (
-        <div className={`opponent-area ${position}`}>
+        <div className={`opponent-area ${position} ${isCurrentTurnPlayer ? 'yellow-border' : ''}`}>
             <div className='top-area'>
                 <div className='gate-cards'>
+                {firstPlayer === playerInfo.playerId && (
+                        <div className="gateway">
+                            <img 
+                                src={`${process.env.PUBLIC_URL}/images/first-player.jpg`} 
+                                alt="First Player" 
+                                className="first-player-image" 
+                            />
+                        </div>
+                )}
                     <img src={`${process.env.PUBLIC_URL}/images/gate-${position}.jpg`} 
                         alt="관문" className="card-image" />
                     {/* <div className="card-slot slot1">
@@ -28,12 +54,18 @@ const OpponentArea: React.FC<OpponentAreaProps> = ( {position, playerInfo}) => {
                     </div> */}
                 </div>
                 <div className='top-right'>
-                    <div className="profile">{playerInfo.playerId}</div>
-                        <div className="score">
-                            <img src={`${process.env.PUBLIC_URL}/images/scroll-background2.png`} 
-                                alt="점수배경" className="card-image" />
-                            <div className='score-area'>00</div>
-                        </div>
+                    <div className={`profile ${isCreator ? 'red-border' : ''}`}>
+                        {playerInfo.playerId}
+                    </div>
+                    {/* <div className="profile">
+                        {isCreator && <span className="creator-label">H</span>}
+                        {playerInfo.playerId}
+                    </div> */}
+                    <div className="score">
+                        <img src={`${process.env.PUBLIC_URL}/images/scroll-background2.png`} 
+                            alt="점수배경" className="card-image" />
+                        <div className='score-area'>00</div>
+                    </div>
                 </div>
             </div>
             <div className='function-cards'>            
