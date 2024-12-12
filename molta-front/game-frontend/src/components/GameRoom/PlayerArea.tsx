@@ -178,10 +178,15 @@ const handleFetchPlayerData = async (playerName: any) => {
 
     return (
         <div className={`player-area ${isCurrentTurnPlayer ? 'yellow-border' : ''}`}>
-            <div className='score-area'>
-                <img src={`${process.env.PUBLIC_URL}/images/scroll-background2.png`} 
-                alt="점수배경" className="card-image" />
-                <div className="score">0</div>
+            <div className='scoreAndName'>
+                <div className='score-area'>
+                    <img src={`${process.env.PUBLIC_URL}/images/scroll-background2.png`} 
+                    alt="점수배경" className="card-image" />
+                    <div className="score">0</div>
+                </div>
+                <div className='profile'>
+                        {playerName}
+                </div>
             </div>  
             <div className="resource-cards">
                 {playerResourceCards && playerResourceCards.length > 0 ? (
@@ -252,7 +257,6 @@ const handleFetchPlayerData = async (playerName: any) => {
                     </div>
             </div>
             <div className="function-cards">
-
                 <div className="card-category">
                     <div className="card-container">
                         {blueCards.map(card => (
@@ -266,7 +270,6 @@ const handleFetchPlayerData = async (playerName: any) => {
                         ))}
                     </div>
                 </div>
-
                 <div className="card-category">
                     <div className="card-container">
                         {redCards.map(card => (
@@ -280,7 +283,6 @@ const handleFetchPlayerData = async (playerName: any) => {
                         ))}
                     </div>
                 </div>
-
                 <div className="card-category">
                     <div className="card-container">
                         {greenCards.map(card => (

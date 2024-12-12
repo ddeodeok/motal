@@ -1,12 +1,20 @@
 export type PlayerInfo = {
     playerId: String;
     playerName: string;
-    score: number;
-    gateCards: (number | null)[];
-    totalResourceCards: number[];
-    gemCount: number[];
-    functionCards: number[];
+    currentScore: number;
+    readyRevealCard1: number | null;
+    readyRevealCard2: number | null;
+    resourceCards: number[];
+    functionCards: functionCards[];
+    action: number;
+    gemCards: number[];
 };
+
+export type functionCards ={
+    cardId: string;
+    cardType: string;
+    cardCount: number;
+}
 
 export interface PlayerState {
     resourceCards: number[]; 
@@ -36,11 +44,13 @@ export type OpponentPlayerData = {
 export const defaultPlayerInfo: PlayerInfo = {
     playerId: "대기 중",
     playerName: "대기 중",
-    score: 0,
-    gateCards: [null, null],
-    totalResourceCards: [],
-    gemCount: [],
-    functionCards: []
+    currentScore: 0,
+    readyRevealCard1: null,
+    readyRevealCard2: null,
+    resourceCards: [],
+    gemCards: [],
+    functionCards: [],
+    action: 0
 };
 
 export type GameRoomProps = {

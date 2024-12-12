@@ -91,13 +91,14 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
         try {
             const response = await axios.get(`/room/${centralBoardId}/players`);
             const players = response.data;  // 서버에서 받아온 플레이어 목록
+            console.log('전체 Players',players)
             setPlayers(players);  // 플레이어 목록을 상태 변수로 설정
             // 각 플레이어의 상태 처리
             const playerDataList = [];
+            const playerIdSelf = localStorage.getItem("playerId");
             for (const playerId of players) {
                 const playerStateResponse = await axios.get(`/game/${centralBoardId}/player/${playerId}/resource-cards`);
                 const playerState = playerStateResponse.data;
-                const playerIdSelf = localStorage.getItem("playerId");
                 if (playerId === playerIdSelf) {
                     // 현재 플레이어의 데이터는 상태 변수에 설정
                     setPlayerResourceCards(playerState.resourceCards);
@@ -115,16 +116,25 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
                     readyRevealCard2: playerState.readyRevealCard2,
                     action: playerState.action,
                     maxResourceCardCount: playerState.maxResourceCardCount,
+                    gemCards: playerState.gemCards
                 });
             }
-            setPlayersData(playerDataList);  // 모든 플레이어의 데이터를 상태로 저장
-            console.log('playerData:', playerDataList)
-
+            console.log('모야..currentPlayer',playerIdSelf)
+            console.log('모야..currentPlayerID',playerDataList[0].playerId)
+            const selfIndex = playerDataList.findIndex(player => player.playerId === playerIdSelf)
+            console.log('playerDataList',playerDataList)
+            console.log('selfIndex',selfIndex)
+            const otherPlayers = [
+                ...playerDataList.slice(selfIndex + 1),  // 본인 이후의 플레이어들
+                ...playerDataList.slice(0, selfIndex),  // 본인 이전의 플레이어들
+            ];
+            const organizedPlayList = [playerDataList[selfIndex], ...otherPlayers];
+            setPlayersData(organizedPlayList);  // 모든 플레이어의 데이터를 상태로 저장
         } catch (error) {
             console.error("플레이어 정보 가져오기 실패:", error);
         }
     };
-
+    console.log('playersData',playersData);
 
 
 
@@ -187,12 +197,9 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
                 const otherPlayers = playerList.filter((p: string) => p !== playerId);
                 const player = playerList.find((p: string) => p === playerId);
                 setPlayers(otherPlayers.map((id: string) => ({ playerId: id })));
-                setCurrentPlayer(player );
+                setCurrentPlayer(player);
                 console.log('Current player:', player);  // currentPlayer 확인
                 console.log('Player ID from localStorage:', playerId);  // playerId 확인
-                // if (player) {
-                // }
-                // setPlayers(playerList);
             } catch (error) {
                 console.error("플레이어 정보 가져오기 실패:", error);
             }
@@ -200,7 +207,6 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
         fetchBoardState();
         fetchPlayers();
         fetchPlayersResourceCards();
-        
 
         // WebSocket 연결을 위한 SockJS 객체 생성
         const socket = new SockJS('http://localhost:8412/ws/chat',{
@@ -400,15 +406,15 @@ const GameRoom: React.FC<GameRoomProps> = ({ gameId }) => {
     return (
         
         <div className="game-room">
-            <OpponentArea position="left" playerInfo={players[0] || defaultPlayerInfo}
+            <OpponentArea position="left" playerInfo={playersData[1] || defaultPlayerInfo}
             boardState={boardState}
             firstPlayer={firstPlayer}
             currentTurnPlayer={currentTurnPlayer}/>
-            <OpponentArea position="top" playerInfo={players[1] || defaultPlayerInfo}
+            <OpponentArea position="top" playerInfo={playersData[2] || defaultPlayerInfo}
             boardState={boardState}
             firstPlayer={firstPlayer}
             currentTurnPlayer={currentTurnPlayer} />
-            <OpponentArea position="right" playerInfo={players[2] || defaultPlayerInfo}
+            <OpponentArea position="right" playerInfo={playersData[3] || defaultPlayerInfo}
             boardState={boardState}
             firstPlayer={firstPlayer}
             currentTurnPlayer={currentTurnPlayer} />

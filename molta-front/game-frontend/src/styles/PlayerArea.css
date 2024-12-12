@@ -41,7 +41,7 @@
 }
 
 .player-area .score {
-    width: 40%;
+    width: 100%;
     height: 50px;
     position: absolute;
     z-index: 1;
@@ -57,7 +57,7 @@
 }
 
 .player-area .score-area {
-    width: 10%;
+    width: 100%;
     height: 48%;
     font-family: 'Ambient', sans-serif;
     font-size: 34px;
@@ -361,4 +361,13 @@
 
 .yellow-border {
     border: 5px solid #ff855c;
+}
+
+.scoreAndName {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 10%;
+
+    border: 5px rgba(255, 204, 0, 0.5)
 }
